@@ -1,0 +1,648 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #1a120c;
+  --color-parlor: #1a120c;
+  --color-surface: #241910;
+  --color-surface-2: #2e2116;
+  --color-paper: #f3e6c8;
+  --color-paper-fg: #2a2218;
+  --color-mount: #ead6b0;
+  --color-gild: #b08a4a;
+  --color-rule: #3a2a14;
+  --color-fg: #f3ead6;
+  --color-muted: #b9a78c;
+  --color-subtle: #8a7560;
+  --color-accent: #c4a574;
+  --color-accent-fg: #1a120c;
+  --color-border: color-mix(in oklab, var(--color-fg) 18%, transparent);
+  --color-border-strong: color-mix(in oklab, var(--color-accent) 55%, transparent);
+  --color-danger: #8f3d32;
+
+  --font-sans: "EB Garamond", "Palatino Linotype", Palatino, "Times New Roman", serif;
+  --font-display: "Playfair Display", "Palatino Linotype", Palatino, serif;
+  --font-victorian: "Cinzel Decorative", "Playfair Display", Palatino, serif;
+  --font-script: "Tangerine", "Snell Roundhand", "Segoe Script", cursive;
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  --shadow-soft: 0 18px 40px color-mix(in oklab, #000 55%, transparent);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  html,
+  body {
+    width: 100%;
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  body {
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  .parlor {
+    --phone-chrome: max(3.5rem, calc(env(safe-area-inset-top, 0px) + 0.9rem));
+    display: grid;
+    min-height: 100dvh;
+    grid-template-rows: minmax(0, 1fr);
+    background-color: var(--color-parlor);
+    background-image: radial-gradient(
+      ellipse at 50% 28%,
+      color-mix(in oklab, var(--color-surface) 80%, transparent),
+      transparent 64%
+    );
+    padding-top: var(--phone-chrome);
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+    padding-left: max(0.35rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.35rem, env(safe-area-inset-right, 0px));
+  }
+
+  .parlor-home {
+    display: grid;
+    min-height: 100dvh;
+    grid-template-rows: minmax(0, 1fr);
+    justify-items: stretch;
+    padding-top: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: 0;
+    padding-right: 0;
+    background-color: #dcb073;
+    background-image: none;
+  }
+
+  .home-plate {
+    position: relative;
+    display: grid;
+    box-sizing: border-box;
+    width: 100%;
+    margin-inline: auto;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    background-color: #dcb073;
+  }
+
+  .home-plate-top,
+  .home-plate-bottom {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .home-plate-mid {
+    min-height: 0;
+    background-color: #c9a56e;
+    background-image: url("/home-rail-left.jpg"), url("/home-rail-right.jpg"), url("/home-plate-mid.jpg");
+    background-repeat: no-repeat;
+    background-size: 6.5% 100%, 6.5% 100%, 100% 100%;
+    background-position: left center, right center, center;
+  }
+
+  .home-plate-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    cursor: pointer;
+    opacity: 0;
+  }
+
+  /* The install ribbon sits in the band above the plate on telephones. */
+  .home-stack {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .home-install-bar {
+    display: grid;
+    min-height: var(--phone-chrome);
+    place-items: end center;
+    padding: 0 1rem 0.45rem;
+  }
+
+  .home-plate-error {
+    position: absolute;
+    right: 1rem;
+    bottom: 1.25rem;
+    left: 1rem;
+    z-index: 30;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #8f3d32;
+  }
+
+  @media (min-width: 640px) {
+    .parlor-home {
+      background-color: var(--color-parlor);
+    }
+
+    .home-plate {
+      max-width: min(28rem, 100%);
+    }
+  }
+
+  .stereo-mount {
+    --color-fg: #2a2218;
+    --color-muted: #5c4a32;
+    --color-subtle: #7a6248;
+    --color-surface: #dcc59a;
+    --color-surface-2: #cbb07f;
+    --color-accent: #2a2218;
+    --color-accent-fg: #f3e6c8;
+    --color-border: color-mix(in oklab, #2a2218 22%, transparent);
+    --color-border-strong: color-mix(in oklab, #3a2a14 50%, transparent);
+    --color-bg: #e1be8b;
+    --color-mount: #e1be8b;
+
+    position: relative;
+    display: grid;
+    width: 100%;
+    max-width: 26rem;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    margin-inline: auto;
+    overflow: hidden;
+    color: var(--color-fg);
+    background-color: #e1be8b;
+    font-family: var(--font-display);
+    box-shadow: 0 22px 48px color-mix(in oklab, #000 55%, transparent);
+  }
+
+  .work-frame-top,
+  .work-frame-bottom {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .work-frame-mid {
+    display: grid;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+    background-color: #e1be8b;
+    background-image: url("/work-rail-left.jpg"), url("/work-rail-right.jpg"), url("/work-frame-mid.jpg");
+    background-repeat: no-repeat;
+    background-size: 8% 100%, 8% 100%, 100% 100%;
+    background-position: left center, right center, center;
+  }
+
+  .plate-mid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows: minmax(0, 1fr);
+    padding: 0.2rem 8.5% 0.35rem;
+    background: transparent;
+  }
+
+  .workspace-grid {
+    display: grid;
+    height: 100%;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      auto
+      minmax(7.5rem, 1fr)
+      auto
+      auto
+      auto
+      auto
+      auto;
+    grid-template-areas:
+      "head"
+      "photo"
+      "pane"
+      "status"
+      "strength"
+      "hint"
+      "make";
+    align-content: stretch;
+    gap: 0.4rem;
+  }
+
+  .workspace-grid > .wg-head {
+    grid-area: head;
+    display: grid;
+    place-items: center;
+  }
+
+  .workspace-grid > .wg-head .ribbon {
+    min-width: 11rem;
+  }
+
+  .workspace-grid > .wg-photo {
+    grid-area: photo;
+    min-height: 0;
+  }
+
+  .workspace-grid > .wg-pane {
+    position: relative;
+    z-index: 6;
+    grid-area: pane;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    pointer-events: auto;
+  }
+
+  .workspace-grid > .wg-status {
+    grid-area: status;
+  }
+
+  .workspace-grid > .wg-strength {
+    position: relative;
+    z-index: 6;
+    grid-area: strength;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: auto;
+  }
+
+  .workspace-grid > .wg-hint {
+    grid-area: hint;
+  }
+
+  .workspace-grid > .wg-make {
+    position: relative;
+    z-index: 6;
+    grid-area: make;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    pointer-events: auto;
+  }
+
+  .workspace-grid > .wg-make .ribbon-lg {
+    grid-column: 1 / -1;
+  }
+
+  .result-grid {
+    display: grid;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      auto
+      minmax(8rem, 1fr)
+      auto
+      auto;
+    grid-template-areas:
+      "head"
+      "plate"
+      "copy"
+      "act";
+    gap: 0.5rem;
+  }
+
+  .result-grid > .rg-head {
+    grid-area: head;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .result-grid > .rg-plate {
+    grid-area: plate;
+    min-height: 0;
+  }
+
+  .result-grid > .rg-copy {
+    grid-area: copy;
+  }
+
+  .result-grid > .rg-act {
+    grid-area: act;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  @media (max-width: 639px) {
+    .parlor:not(.parlor-home) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .stereo-mount {
+      max-width: none;
+      box-shadow: none;
+    }
+  }
+
+  @media (orientation: landscape) {
+    .parlor {
+      --phone-chrome: max(0.35rem, env(safe-area-inset-top, 0px));
+      padding-top: max(0.35rem, env(safe-area-inset-top, 0px));
+      padding-bottom: max(0.35rem, env(safe-area-inset-bottom, 0px));
+      padding-left: max(0.5rem, env(safe-area-inset-left, 0px));
+      padding-right: max(0.5rem, env(safe-area-inset-right, 0px));
+    }
+
+    .stereo-mount {
+      max-width: none;
+    }
+
+    .plate-mid {
+      padding: 0.2rem 0.3rem 0.3rem;
+    }
+
+    .workspace-grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(11rem, 0.85fr);
+      grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+      grid-template-areas:
+        "head head"
+        "photo pane"
+        "photo status"
+        "photo strength"
+        "photo make";
+    }
+
+    .workspace-grid > .wg-hint {
+      display: none;
+    }
+
+    .result-grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "head head"
+        "plate copy"
+        "plate act";
+    }
+  }
+
+  .sbs-force-land {
+    position: fixed;
+    z-index: 60;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: 100dvh;
+    height: 100dvw;
+    grid-template-rows: auto minmax(0, 1fr);
+    background: #e1be8b;
+    color: #2a2218;
+    transform: translate(-50%, -50%) rotate(90deg);
+    transform-origin: center center;
+  }
+
+  .sbs-force-land[data-turn="-90"] {
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+
+  .sbs-force-land .twin-windows {
+    min-height: 0;
+  }
+
+  .photo-window {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    background: #1c140e;
+    border: 1px solid var(--color-rule);
+    box-shadow: inset 0 0 16px color-mix(in oklab, #000 28%, transparent);
+  }
+
+  /*
+   * Photographs fill their window by the longer side and keep their own
+   * proportions. Absolute so a large photograph never grows the window and
+   * pushes the controls (or itself) out of view.
+   */
+  .fit-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .arch-window {
+    border-radius: 22% 22% 0.45rem 0.45rem / 14% 14% 0.45rem 0.45rem;
+  }
+
+  .twin-windows {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+  }
+
+  .kicker {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .ribbon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 1.85rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.18rem 0.95rem;
+    color: #f4e6c4;
+    font-family: var(--font-victorian);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    isolation: isolate;
+    touch-action: manipulation;
+  }
+
+  .ribbon::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+    background: linear-gradient(#3f2914, #24160c);
+    border: 1px solid #c4a36a;
+    box-shadow:
+      inset 0 0 0 1px #5c3d1c,
+      0 1px 0 #d7b57a;
+    clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%);
+  }
+
+  .ribbon-lg {
+    min-height: 2.15rem;
+    padding: 0.22rem 1.15rem;
+    font-size: 0.68rem;
+  }
+
+  .ribbon-lg::before {
+    clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0% 50%);
+  }
+
+  .ribbon-on {
+    color: #2a1a0c;
+  }
+
+  .ribbon-on::before {
+    background: linear-gradient(#e8d5a4, #c9a66a);
+    border-color: #8a6a32;
+    box-shadow:
+      inset 0 0 0 1px #f3e6c8,
+      0 1px 0 #5c3d1c;
+  }
+
+  .ribbon:disabled {
+    opacity: 0.38;
+  }
+
+  .mount-frame {
+    border-radius: 1.5rem;
+    box-shadow:
+      0 0 0 1px var(--color-rule),
+      0 0 0 4px var(--color-gild),
+      0 0 0 5px var(--color-rule),
+      0 22px 48px color-mix(in oklab, #000 55%, transparent);
+  }
+
+  /*
+   * Computers (mouse or trackpad, wide window): keep the instrument at the
+   * size of a real stereoview card instead of stretching it across the screen.
+   * A Victorian card is about 7 by 3.5 inches, each view about 3 inches square.
+   * Phones and tablets keep the full-screen layouts above.
+   */
+  @media (hover: hover) and (pointer: fine) and (min-width: 640px) {
+    .parlor,
+    .parlor-home {
+      grid-template-rows: auto;
+      place-items: center;
+      align-content: center;
+      padding: 1rem;
+    }
+
+    .home-plate {
+      width: min(26rem, calc((100dvh - 5rem) * 0.56));
+      height: auto;
+    }
+
+    .home-stack {
+      grid-template-rows: auto auto;
+      justify-items: center;
+      gap: 0.9rem;
+    }
+
+    .home-install-bar {
+      order: 2;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .stereo-mount {
+      width: 7.5in;
+      max-width: calc(100vw - 2rem);
+      height: auto;
+    }
+
+    .plate-mid {
+      padding: 0.2rem 8.5% 0.35rem;
+    }
+
+    .workspace-grid {
+      height: auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 3.1in auto auto auto auto auto;
+      grid-template-areas:
+        "head"
+        "photo"
+        "pane"
+        "status"
+        "strength"
+        "hint"
+        "make";
+    }
+
+    .workspace-grid > .wg-hint {
+      display: block;
+    }
+
+    .result-grid {
+      height: auto;
+      overflow: visible;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto 3.1in auto;
+      grid-template-areas:
+        "head head"
+        "plate plate"
+        "copy act";
+      column-gap: 1rem;
+    }
+  }
+}
+
+@layer utilities {
+  .safe-x {
+    padding-left: max(1.15rem, env(safe-area-inset-left));
+    padding-right: max(1.15rem, env(safe-area-inset-right));
+  }
+
+  .safe-top {
+    padding-top: max(3.5rem, calc(env(safe-area-inset-top, 0px) + 0.9rem));
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1.15rem, env(safe-area-inset-bottom));
+  }
+
+  .pressable {
+    transition:
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
