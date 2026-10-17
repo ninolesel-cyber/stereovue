@@ -21,7 +21,9 @@
 
   --font-sans: "EB Garamond", "Palatino Linotype", Palatino, "Times New Roman", serif;
   --font-display: "Playfair Display", "Palatino Linotype", Palatino, serif;
-  --font-victorian: "Cinzel Decorative", "Playfair Display", Palatino, serif;
+  /* Cinzel rather than Cinzel Decorative: the decorative cut draws "oo" as one
+     joined glyph (CHOOSING, BOOK), which no font setting can turn off. */
+  --font-victorian: "Cinzel", "Playfair Display", Palatino, serif;
   --font-script: "Tangerine", "Snell Roundhand", "Segoe Script", cursive;
 
   --radius-xs: 0.125rem;

@@ -39,7 +39,7 @@ function fillCream(ctx: CanvasRenderingContext2D, w: number, h: number) {
 
 export async function readyVictorianFont() {
   try {
-    await document.fonts.load("700 28px 'Cinzel Decorative'");
+    await document.fonts.load("700 28px 'Cinzel'");
     await document.fonts.ready;
   } catch {
     // canvas will fall back to serif
@@ -49,7 +49,7 @@ export async function readyVictorianFont() {
 function paintCaption(ctx: CanvasRenderingContext2D, width: number, y: number, size: number) {
   ctx.save();
   ctx.fillStyle = "#2a2218";
-  ctx.font = `700 ${size}px 'Cinzel Decorative', 'Playfair Display', Palatino, serif`;
+  ctx.font = `700 ${size}px 'Cinzel', 'Playfair Display', Palatino, serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("Made with Stereo Vue", width / 2, y);

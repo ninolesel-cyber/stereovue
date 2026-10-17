@@ -30,6 +30,33 @@ interface GrokPwaEvent {
   req: { method: string; headers: Headers };
 }
 
+/**
+ * Vercel credit savers. Signed-out pages are shared from Vercel's cache for a
+ * minute and served stale for ten more while they refresh, so repeat visits
+ * and bots do not each run the server. Anyone signed in is never cached.
+ */
+const PUBLIC_PAGE_CACHE = "public, max-age=0, s-maxage=60, stale-while-revalidate=600";
+const SESSION_COOKIE = "grok-auth.session_token";
+
+/** Addresses scanners try (WordPress, PHP, dotfiles). None exist in this app. */
+const PROBE_PATH =
+  /(^\/(wp-|wordpress|xmlrpc|phpmyadmin|pma|cgi-bin|vendor\/|\.(env|git|aws|ssh|svn|ht|DS_Store)))|\.(php\d?|asp|aspx|jsp|cgi|env|ini|sql|bak|old|swp)$/i;
+
+function isSignedIn(event: GrokPwaEvent): boolean {
+  return String(event.req.headers.get("cookie") ?? "").includes(SESSION_COOKIE);
+}
+
+function withPageCache(response: Response, event: GrokPwaEvent): Response {
+  if (response.status >= 500) return response;
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", isSignedIn(event) ? "private, no-store" : PUBLIC_PAGE_CACHE);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 function requestHost(event: GrokPwaEvent): string {
   return (
     event.req.headers.get("x-forwarded-host") ?? event.req.headers.get("host") ?? event.url.host
@@ -65,16 +92,27 @@ export default async function grokPwaMiddleware(
   next: () => unknown | Promise<unknown>,
 ): Promise<unknown> {
   const method = (event.req.method ?? "GET").toUpperCase();
-  if (method !== "GET") return next();
+  // HEAD is how many bots check a page; it is cached exactly like GET.
+  if (method !== "GET" && method !== "HEAD") return next();
 
   const path = event.url.pathname;
+
+  if (PROBE_PATH.test(path)) {
+    return new Response(method === "HEAD" ? null : "Not found", {
+      status: 404,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "public, max-age=3600, s-maxage=86400",
+      },
+    });
+  }
   const urlWithQuery = path + event.url.search;
 
   if (path === "/__grok/manifest.webmanifest" || path === "/__grok/manifest.json") {
     return new Response(renderWebManifest(requestHost(event)), {
       headers: {
         "content-type": "application/manifest+json; charset=utf-8",
-        "cache-control": "no-cache",
+        "cache-control": "public, max-age=86400, s-maxage=86400",
       },
     });
   }
@@ -99,13 +137,10 @@ export default async function grokPwaMiddleware(
   if (!isDocumentPath(path)) return next();
 
   const result = await next();
-  if (
-    result instanceof Response &&
-    result.body &&
-    String(result.headers.get("content-type") ?? "").includes("text/html") &&
-    !result.headers.get("content-encoding")
-  ) {
-    return injectHeadStreaming(result, requestHost(event));
+  if (!(result instanceof Response)) return result;
+  const isHtml = String(result.headers.get("content-type") ?? "").includes("text/html");
+  if (isHtml && result.body && !result.headers.get("content-encoding")) {
+    return withPageCache(injectHeadStreaming(result, requestHost(event)), event);
   }
-  return result;
+  return isHtml ? withPageCache(result, event) : result;
 }

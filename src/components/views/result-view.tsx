@@ -83,7 +83,7 @@ function SaveActions({
       {computer ? (
         <>
           <Ribbon size="lg" disabled={disabled} onClick={() => onSave("folder")}>
-            Preserve to a Folder of Your Choosing
+            Preserve to an Album of Your Choosing
           </Ribbon>
           {canShare ? (
             <Ribbon size="lg" disabled={disabled} onClick={() => onSave("share")}>

@@ -9,9 +9,10 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-type Platform = "ios" | "android" | "mac-safari" | "chromium" | "other";
+type Platform = "ios" | "android" | "mac-safari" | "chromium" | "mac-app" | "other";
 
 function detectPlatform(): Platform {
+  if (isNativeShell()) return "mac-app";
   const ua = navigator.userAgent;
   const touchMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
   if (/iPhone|iPad|iPod/.test(ua) || touchMac) return "ios";
@@ -23,7 +24,6 @@ function detectPlatform(): Platform {
 }
 
 function isInstalled() {
-  if (isNativeShell()) return true;
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true
@@ -40,6 +40,8 @@ if (typeof window !== "undefined") {
 }
 
 const DIRECTIONS: Record<Exclude<Platform, "ios">, string> = {
+  "mac-app":
+    "The instrument is already installed upon this Mac. To keep it in the Dock, hold Control, click its mark in the Dock, and choose Options, then Keep in Dock. To carry it to a telephone or tablet, open the Stereo Vue address in Safari or Chrome upon that device and press this same ribbon there.",
   android:
     "Open the menu of your browser (the three points at the upper right) and choose Install app, or Add to Home screen.",
   "mac-safari": "From the File menu of Safari, choose Add to Dock. The instrument shall thereafter open from your Dock.",
@@ -82,6 +84,7 @@ export function InstallInstrument({ className }: { className?: string }) {
   return (
     <>
       <Ribbon
+        size="lg"
         className={className}
         onClick={(event) => {
           event.stopPropagation();
@@ -98,17 +101,23 @@ export function InstallInstrument({ className }: { className?: string }) {
             aria-label="Close the directions"
             onClick={() => setDirections(null)}
           />
-          <div className="mount-frame relative z-10 w-full max-w-md bg-mount p-6 text-fg sm:mx-4">
+          <div className="mount-frame relative z-10 w-full max-w-md bg-[#e8d5a4] p-6 text-[#2a2218] sm:mx-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="kicker">Directions for the keeping of</p>
+                <p className="kicker !text-[#5c4a32]">Directions for the keeping of</p>
                 <h2 className="font-display mt-1 text-2xl italic">Stereo Vue upon Your Device</h2>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setDirections(null)} aria-label="Close">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-[#2a2218] hover:bg-[#2a2218]/10 hover:text-[#2a2218]"
+                onClick={() => setDirections(null)}
+                aria-label="Close"
+              >
                 <X className="size-5" />
               </Button>
             </div>
-            <p className="mt-4 font-display text-base italic leading-relaxed text-fg/85">{directions}</p>
+            <p className="mt-4 font-display text-base italic leading-relaxed text-[#3a2c1c]">{directions}</p>
           </div>
         </div>
       ) : null}
