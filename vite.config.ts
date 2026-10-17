@@ -177,6 +177,11 @@ export default defineConfig(async ({ command, isPreview }) => {
     strictPort: true,
   },
   resolve: { tsconfigPaths: true },
+  // Older iPhones (iOS 15: 6s, 7, first SE) cannot run newer JavaScript or CSS.
+  build: {
+    target: ["es2020", "safari15", "chrome90", "firefox90"],
+    cssTarget: ["safari15", "chrome90", "firefox90"],
+  },
   optimizeDeps: {
     exclude: ["@huggingface/transformers"],
   },
